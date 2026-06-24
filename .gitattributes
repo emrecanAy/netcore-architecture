@@ -1,0 +1,6 @@
+# Normalize line endings; store LF in the repo.
+* text=auto eol=lf
+*.sln text eol=crlf
+*.png binary
+*.jpg binary
+*.db binary
