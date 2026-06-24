@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using OrderSystem.Services.Abstract;
 using OrderSystem.Services.Concrete;
+using OrderSystem.Services.Outbox;
 
 namespace OrderSystem.Services;
 
@@ -13,6 +14,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddServices(this IServiceCollection services)
     {
         services.AddScoped<IEmailService, EmailService>();
+        services.AddHostedService<OutboxDispatcher>();
         return services;
     }
 }
