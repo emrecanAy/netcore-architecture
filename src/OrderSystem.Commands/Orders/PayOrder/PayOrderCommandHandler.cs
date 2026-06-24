@@ -7,6 +7,7 @@ using OrderSystem.Repositories.Abstract;
 
 namespace OrderSystem.Commands.Orders.PayOrder;
 
+public record PayOrderCommand(Guid OrderId) : IRequest<OrderDto>;
 public class PayOrderCommandHandler : IRequestHandler<PayOrderCommand, OrderDto>
 {
     private readonly ISQLRepository<Order> _orders;

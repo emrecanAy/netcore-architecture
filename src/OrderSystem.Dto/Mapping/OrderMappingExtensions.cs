@@ -25,4 +25,7 @@ public static class OrderMappingExtensions
         Quantity = item.Quantity,
         LineTotal = item.LineTotal.Amount,
     };
+
+    public static IEnumerable<OrderDto> ToDto(this IEnumerable<Order> orders) =>
+        orders.Select(p => p.ToDto());
 }
