@@ -28,3 +28,6 @@ secrets.json
 # OS
 Thumbs.db
 .DS_Store
+
+# Internal architecture reference — never track
+PROJECT.md
