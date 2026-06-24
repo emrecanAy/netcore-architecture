@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using MediatR;
 
 namespace OrderSystem.Models.Abstract;
@@ -11,6 +12,7 @@ public abstract class EntityDomainEvent
 {
     private List<INotification>? _domainEvents;
 
+    [JsonIgnore]
     public IReadOnlyList<INotification> DomainEvents =>
         _domainEvents ?? (IReadOnlyList<INotification>)Array.Empty<INotification>();
 
