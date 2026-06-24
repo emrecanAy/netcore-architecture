@@ -1,12 +1,13 @@
-using MediatR;
-using Microsoft.EntityFrameworkCore;
-using OrderSystem.Dto;
-using OrderSystem.Dto.Mapping;
-using OrderSystem.Models.Concrete;
 using OrderSystem.Repositories.Abstract;
+using Microsoft.EntityFrameworkCore;
+using OrderSystem.Models.Concrete;
+using OrderSystem.Dto.Mapping;
+using OrderSystem.Dto;
+using MediatR;
 
 namespace OrderSystem.Queries.Orders.GetOrder;
 
+public record GetOrderQuery(Guid Id) : IRequest<OrderDto>;
 public class GetOrderQueryHandler : IRequestHandler<GetOrderQuery, OrderDto>
 {
     private readonly ISQLRepository<Order> _orders;
