@@ -1,0 +1,30 @@
+# Build output
+bin/
+obj/
+out/
+
+# Rider / VS
+.vs/
+.idea/
+*.user
+*.suo
+
+# Test results
+[Tt]est[Rr]esult*/
+*.trx
+coverage*.xml
+coverage*.json
+
+# Local DB (SQLite)
+*.db
+*.db-shm
+*.db-wal
+
+# Env / secrets (never commit)
+*.env
+appsettings.*.local.json
+secrets.json
+
+# OS
+Thumbs.db
+.DS_Store
