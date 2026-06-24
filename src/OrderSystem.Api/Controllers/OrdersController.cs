@@ -4,6 +4,7 @@ using OrderSystem.Commands.Orders.PayOrder;
 using OrderSystem.Commands.Orders.PlaceOrder;
 using OrderSystem.Dto;
 using OrderSystem.Queries.Orders.GetOrder;
+using OrderSystem.Queries.Orders.ListOrders;
 
 namespace OrderSystem.Api.Controllers;
 
@@ -29,4 +30,8 @@ public class OrdersController : ControllerBase
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<OrderDto>> GetById(Guid id) =>
         Ok(await _mediator.Send(new GetOrderQuery(id)));
+
+    [HttpGet]
+    public async Task<ActionResult<IReadOnlyList<OrderDto>>> List([FromQuery] string? status = null) =>
+        Ok(await _mediator.Send(new ListOrdersQuery(status)));
 }

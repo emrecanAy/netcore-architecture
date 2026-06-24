@@ -7,16 +7,18 @@ namespace OrderSystem.UnitTests.Domain;
 
 public class ProductTests
 {
+    private const int Usd = 1;
+
     private static Product NewProduct(int stock = 10) =>
-        new("Keyboard", new Sku("kb-1"), new Money(100m, "usd"), stock);
+        new("Keyboard", new Sku("kb-1"), new Money(100m, Usd), stock);
 
     [Fact]
-    public void Create_normalizes_sku_and_currency()
+    public void Create_normalizes_sku_and_sets_currency()
     {
         var product = NewProduct();
 
         Assert.Equal("KB-1", product.Sku.Value);
-        Assert.Equal("USD", product.Price.Currency);
+        Assert.Equal(Usd, product.Price.CurrencyId);
         Assert.True(product.IsActive);
     }
 

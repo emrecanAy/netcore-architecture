@@ -8,11 +8,13 @@ namespace OrderSystem.UnitTests.Domain;
 public class OrderTests
 {
     private static readonly Guid Customer = Guid.NewGuid();
+    private const int Usd = 1;
+    private const int Eur = 2;
 
     private static Order DraftWithItem()
     {
-        var order = new Order(Customer, "USD");
-        order.AddItem(Guid.NewGuid(), "Keyboard", new Money(100m, "USD"), 2);
+        var order = new Order(Customer, Usd);
+        order.AddItem(Guid.NewGuid(), "Keyboard", new Money(100m, Usd), 2);
         return order;
     }
 
@@ -28,7 +30,7 @@ public class OrderTests
     [Fact]
     public void Place_requires_items()
     {
-        var order = new Order(Customer, "USD");
+        var order = new Order(Customer, Usd);
 
         Assert.Throws<InvalidOperationException>(() => order.Place());
     }
@@ -51,7 +53,7 @@ public class OrderTests
         order.Place();
 
         Assert.Throws<InvalidOperationException>(() =>
-            order.AddItem(Guid.NewGuid(), "Mouse", new Money(10m, "USD"), 1));
+            order.AddItem(Guid.NewGuid(), "Mouse", new Money(10m, Usd), 1));
     }
 
     [Fact]
@@ -81,9 +83,9 @@ public class OrderTests
     [Fact]
     public void AddItem_rejects_mismatched_currency()
     {
-        var order = new Order(Customer, "USD");
+        var order = new Order(Customer, Usd);
 
         Assert.Throws<InvalidOperationException>(() =>
-            order.AddItem(Guid.NewGuid(), "Keyboard", new Money(100m, "EUR"), 1));
+            order.AddItem(Guid.NewGuid(), "Keyboard", new Money(100m, Eur), 1));
     }
 }
