@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using OrderSystem.Dto;
 using OrderSystem.Dto.Mapping;
 using OrderSystem.Models.Concrete;
+using OrderSystem.Repositories;
 using OrderSystem.Repositories.Abstract;
 
 namespace OrderSystem.Commands.Orders.PlaceOrder;
@@ -16,16 +17,24 @@ public class PlaceOrderCommandHandler : IRequestHandler<PlaceOrderCommand, Order
 {
     private readonly ISQLRepository<Product> _products;
     private readonly ISQLRepository<Order> _orders;
+    private readonly ISQLRepository<Currency> _currencies;
 
-    public PlaceOrderCommandHandler(ISQLRepository<Product> products, ISQLRepository<Order> orders)
+    public PlaceOrderCommandHandler(
+        ISQLRepository<Product> products,
+        ISQLRepository<Order> orders,
+        ISQLRepository<Currency> currencies)
     {
         _products = products;
         _orders = orders;
+        _currencies = currencies;
     }
 
     public async Task<OrderDto> Handle(PlaceOrderCommand request, CancellationToken cancellationToken)
     {
-        var order = new Order(request.CustomerId, request.Currency);
+        var currency = await _currencies.FindByCodeAsync(request.Currency, cancellationToken)
+            ?? throw new InvalidOperationException($"Unknown currency '{request.Currency}'.");
+
+        var order = new Order(request.CustomerId, currency.Id);
 
         foreach (var line in request.Items)
         {
@@ -39,6 +48,6 @@ public class PlaceOrderCommandHandler : IRequestHandler<PlaceOrderCommand, Order
         order.Place();
 
         await _orders.AddAsync(order, cancellationToken);
-        return order.ToDto();
+        return order.ToDto(new Dictionary<int, string> { [currency.Id] = currency.Code });
     }
 }

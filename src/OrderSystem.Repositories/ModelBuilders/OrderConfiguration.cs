@@ -14,7 +14,7 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
         builder.HasKey(o => o.Id);
 
         builder.Property(o => o.CustomerId).IsRequired();
-        builder.Property(o => o.Currency).IsRequired().HasMaxLength(3);
+        builder.Ignore(o => o.CurrencyId); // derived from TotalAmount
 
         builder.Property(o => o.Status)
             .HasConversion(status => status.Value, value => OrderStatus.FromValue(value))
@@ -25,7 +25,8 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
         builder.OwnsOne(o => o.TotalAmount, total =>
         {
             total.Property(m => m.Amount).HasColumnName("TotalAmount").HasColumnType("decimal(18,2)").IsRequired();
-            total.Property(m => m.Currency).HasColumnName("TotalCurrency").HasMaxLength(3).IsRequired();
+            total.Property(m => m.CurrencyId).HasColumnName("CurrencyId").IsRequired();
+            total.HasOne<Currency>().WithMany().HasForeignKey(m => m.CurrencyId).OnDelete(DeleteBehavior.Restrict);
         });
         builder.Navigation(o => o.TotalAmount).IsRequired();
 

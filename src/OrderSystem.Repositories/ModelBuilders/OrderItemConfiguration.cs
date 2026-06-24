@@ -18,7 +18,8 @@ public class OrderItemConfiguration : IEntityTypeConfiguration<OrderItem>
         builder.OwnsOne(i => i.UnitPrice, price =>
         {
             price.Property(m => m.Amount).HasColumnName("UnitPrice").HasColumnType("decimal(18,2)").IsRequired();
-            price.Property(m => m.Currency).HasColumnName("Currency").HasMaxLength(3).IsRequired();
+            price.Property(m => m.CurrencyId).HasColumnName("CurrencyId").IsRequired();
+            price.HasOne<Currency>().WithMany().HasForeignKey(m => m.CurrencyId).OnDelete(DeleteBehavior.Restrict);
         });
         builder.Navigation(i => i.UnitPrice).IsRequired();
 

@@ -1,16 +1,20 @@
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using OrderSystem.Models.Concrete;
+using OrderSystem.Repositories;
 using OrderSystem.Repositories.Abstract;
 
 namespace OrderSystem.Commands.Orders.PlaceOrder;
 
 public class PlaceOrderCommandValidator : AbstractValidator<PlaceOrderCommand>
 {
-    public PlaceOrderCommandValidator(ISQLRepository<Product> products)
+    public PlaceOrderCommandValidator(ISQLRepository<Product> products, ISQLRepository<Currency> currencies)
     {
         RuleFor(x => x.CustomerId).NotEmpty();
-        RuleFor(x => x.Currency).NotEmpty().Length(3);
+        RuleFor(x => x.Currency)
+            .NotEmpty().Length(3)
+            .MustAsync(async (code, ct) => await currencies.FindByCodeAsync(code, ct) is not null)
+            .WithMessage("Unknown currency.");
         RuleFor(x => x.Items).NotEmpty().WithMessage("An order must contain at least one item.");
 
         RuleForEach(x => x.Items).ChildRules(item =>
