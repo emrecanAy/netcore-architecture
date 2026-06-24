@@ -21,11 +21,13 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
             .HasMaxLength(64);
         builder.HasIndex(p => p.Sku).IsUnique();
 
-        // Money is a composite VO mapped to two columns via an owned type.
+        // Money is a composite VO mapped to two columns via an owned type; the
+        // currency is stored as an id with an FK to the Currency reference table.
         builder.OwnsOne(p => p.Price, price =>
         {
             price.Property(m => m.Amount).HasColumnName("Price").HasColumnType("decimal(18,2)").IsRequired();
-            price.Property(m => m.Currency).HasColumnName("Currency").HasMaxLength(3).IsRequired();
+            price.Property(m => m.CurrencyId).HasColumnName("CurrencyId").IsRequired();
+            price.HasOne<Currency>().WithMany().HasForeignKey(m => m.CurrencyId).OnDelete(DeleteBehavior.Restrict);
         });
         builder.Navigation(p => p.Price).IsRequired();
 

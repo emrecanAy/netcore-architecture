@@ -11,7 +11,7 @@ using OrderSystem.Repositories.Concrete;
 namespace OrderSystem.Repositories.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260624141614_InitialCreate")]
+    [Migration("20260624194656_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -20,6 +20,55 @@ namespace OrderSystem.Repositories.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.9");
 
+            modelBuilder.Entity("OrderSystem.Models.Concrete.Currency", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Code")
+                        .IsUnique();
+
+                    b.ToTable("Currencies", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Code = "USD",
+                            Name = "US Dollar"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Code = "EUR",
+                            Name = "Euro"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Code = "TRY",
+                            Name = "Turkish Lira"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Code = "GBP",
+                            Name = "British Pound"
+                        });
+                });
+
             modelBuilder.Entity("OrderSystem.Models.Concrete.Order", b =>
                 {
                     b.Property<Guid>("Id")
@@ -27,11 +76,6 @@ namespace OrderSystem.Repositories.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Currency")
-                        .IsRequired()
-                        .HasMaxLength(3)
                         .HasColumnType("TEXT");
 
                     b.Property<Guid>("CustomerId")
@@ -192,15 +236,21 @@ namespace OrderSystem.Repositories.Migrations
                                 .HasColumnType("decimal(18,2)")
                                 .HasColumnName("TotalAmount");
 
-                            b1.Property<string>("Currency")
-                                .IsRequired()
-                                .HasMaxLength(3)
-                                .HasColumnType("TEXT")
-                                .HasColumnName("TotalCurrency");
+                            b1.Property<int>("CurrencyId")
+                                .HasColumnType("INTEGER")
+                                .HasColumnName("CurrencyId");
 
                             b1.HasKey("OrderId");
 
+                            b1.HasIndex("CurrencyId");
+
                             b1.ToTable("Orders");
+
+                            b1.HasOne("OrderSystem.Models.Concrete.Currency", null)
+                                .WithMany()
+                                .HasForeignKey("CurrencyId")
+                                .OnDelete(DeleteBehavior.Restrict)
+                                .IsRequired();
 
                             b1.WithOwner()
                                 .HasForeignKey("OrderId");
@@ -227,15 +277,21 @@ namespace OrderSystem.Repositories.Migrations
                                 .HasColumnType("decimal(18,2)")
                                 .HasColumnName("UnitPrice");
 
-                            b1.Property<string>("Currency")
-                                .IsRequired()
-                                .HasMaxLength(3)
-                                .HasColumnType("TEXT")
-                                .HasColumnName("Currency");
+                            b1.Property<int>("CurrencyId")
+                                .HasColumnType("INTEGER")
+                                .HasColumnName("CurrencyId");
 
                             b1.HasKey("OrderItemId");
 
+                            b1.HasIndex("CurrencyId");
+
                             b1.ToTable("OrderItems");
+
+                            b1.HasOne("OrderSystem.Models.Concrete.Currency", null)
+                                .WithMany()
+                                .HasForeignKey("CurrencyId")
+                                .OnDelete(DeleteBehavior.Restrict)
+                                .IsRequired();
 
                             b1.WithOwner()
                                 .HasForeignKey("OrderItemId");
@@ -256,15 +312,21 @@ namespace OrderSystem.Repositories.Migrations
                                 .HasColumnType("decimal(18,2)")
                                 .HasColumnName("Price");
 
-                            b1.Property<string>("Currency")
-                                .IsRequired()
-                                .HasMaxLength(3)
-                                .HasColumnType("TEXT")
-                                .HasColumnName("Currency");
+                            b1.Property<int>("CurrencyId")
+                                .HasColumnType("INTEGER")
+                                .HasColumnName("CurrencyId");
 
                             b1.HasKey("ProductId");
 
+                            b1.HasIndex("CurrencyId");
+
                             b1.ToTable("Products");
+
+                            b1.HasOne("OrderSystem.Models.Concrete.Currency", null)
+                                .WithMany()
+                                .HasForeignKey("CurrencyId")
+                                .OnDelete(DeleteBehavior.Restrict)
+                                .IsRequired();
 
                             b1.WithOwner()
                                 .HasForeignKey("ProductId");

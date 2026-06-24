@@ -14,9 +14,11 @@ public class Order : Entity
     private readonly List<OrderItem> _items = new();
 
     public Guid CustomerId { get; protected set; }
-    public string Currency { get; protected set; } = default!;
     public OrderStatus Status { get; protected set; } = default!;
     public Money TotalAmount { get; protected set; } = default!;
+
+    /// <summary>The order's currency, taken from its monetary total.</summary>
+    public int CurrencyId => TotalAmount.CurrencyId;
 
     public IReadOnlyCollection<OrderItem> Items => _items.AsReadOnly();
 
@@ -25,17 +27,16 @@ public class Order : Entity
     {
     }
 
-    public Order(Guid customerId, string currency)
+    public Order(Guid customerId, int currencyId)
     {
         if (customerId == Guid.Empty)
             throw new ArgumentException("CustomerId is required.", nameof(customerId));
-        if (string.IsNullOrWhiteSpace(currency))
-            throw new ArgumentException("Currency is required.", nameof(currency));
+        if (currencyId <= 0)
+            throw new ArgumentOutOfRangeException(nameof(currencyId), "A valid currency is required.");
 
         CustomerId = customerId;
-        Currency = currency.ToUpperInvariant();
         Status = OrderStatus.Draft;
-        TotalAmount = Money.Zero(Currency);
+        TotalAmount = Money.Zero(currencyId);
     }
 
     public void AddItem(Guid productId, string productName, Money unitPrice, int quantity)
@@ -43,9 +44,9 @@ public class Order : Entity
         EnsureDraft();
         if (unitPrice is null)
             throw new ArgumentNullException(nameof(unitPrice));
-        if (unitPrice.Currency != Currency)
+        if (unitPrice.CurrencyId != CurrencyId)
             throw new InvalidOperationException(
-                $"Item currency {unitPrice.Currency} does not match order currency {Currency}.");
+                $"Item currency {unitPrice.CurrencyId} does not match order currency {CurrencyId}.");
 
         var existing = _items.FirstOrDefault(i => i.ProductId == productId);
         if (existing is not null)
@@ -128,5 +129,5 @@ public class Order : Entity
     }
 
     private void RecalculateTotal() =>
-        TotalAmount = _items.Aggregate(Money.Zero(Currency), (sum, item) => sum.Add(item.LineTotal));
+        TotalAmount = _items.Aggregate(Money.Zero(CurrencyId), (sum, item) => sum.Add(item.LineTotal));
 }

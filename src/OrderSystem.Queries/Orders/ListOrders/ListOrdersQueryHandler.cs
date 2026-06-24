@@ -4,6 +4,7 @@ using OrderSystem.Dto;
 using OrderSystem.Dto.Mapping;
 using OrderSystem.Models.Concrete;
 using OrderSystem.Models.ValueObjects;
+using OrderSystem.Repositories;
 using OrderSystem.Repositories.Abstract;
 
 namespace OrderSystem.Queries.Orders.ListOrders;
@@ -18,8 +19,13 @@ public record ListOrdersQuery(string? Status = null) : IRequest<IReadOnlyList<Or
 public class ListOrdersQueryHandler : IRequestHandler<ListOrdersQuery, IReadOnlyList<OrderDto>>
 {
     private readonly ISQLRepository<Order> _orders;
+    private readonly ISQLRepository<Currency> _currencies;
 
-    public ListOrdersQueryHandler(ISQLRepository<Order> orders) => _orders = orders;
+    public ListOrdersQueryHandler(ISQLRepository<Order> orders, ISQLRepository<Currency> currencies)
+    {
+        _orders = orders;
+        _currencies = currencies;
+    }
 
     public async Task<IReadOnlyList<OrderDto>> Handle(ListOrdersQuery request, CancellationToken cancellationToken)
     {
@@ -35,6 +41,7 @@ public class ListOrdersQueryHandler : IRequestHandler<ListOrdersQuery, IReadOnly
             .OrderByDescending(o => o.CreatedDate)
             .ToListAsync(cancellationToken);
 
-        return orders.ToDto().ToList();
+        var currencyCodes = await _currencies.GetCodeMapAsync(cancellationToken);
+        return orders.ToDto(currencyCodes).ToList();
     }
 }

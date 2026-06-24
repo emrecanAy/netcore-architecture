@@ -9,10 +9,15 @@ namespace OrderSystem.UnitTests.Handlers;
 
 public class PlaceOrderCommandHandlerTests
 {
+    private const int Usd = 1;
+
+    private static Mock<OrderSystem.Repositories.Abstract.ISQLRepository<Currency>> Currencies() =>
+        TestRepository.Build(new[] { new Currency(Usd, "USD", "US Dollar") });
+
     [Fact]
     public async Task Handle_builds_order_snapshots_price_and_raises_placed_event()
     {
-        var product = new Product("Keyboard", new Sku("KB-1"), new Money(100m, "USD"), 10);
+        var product = new Product("Keyboard", new Sku("KB-1"), new Money(100m, Usd), 10);
         var productsRepo = TestRepository.Build(new[] { product });
         var ordersRepo = TestRepository.Build(Array.Empty<Order>());
 
@@ -22,7 +27,7 @@ public class PlaceOrderCommandHandlerTests
             .Callback<Order, CancellationToken>((o, _) => added = o)
             .Returns(Task.CompletedTask);
 
-        var handler = new PlaceOrderCommandHandler(productsRepo.Object, ordersRepo.Object);
+        var handler = new PlaceOrderCommandHandler(productsRepo.Object, ordersRepo.Object, Currencies().Object);
         var command = new PlaceOrderCommand(
             Guid.NewGuid(),
             "USD",
@@ -32,6 +37,8 @@ public class PlaceOrderCommandHandlerTests
 
         Assert.Equal("Placed", dto.Status);
         Assert.Equal(300m, dto.TotalAmount);
+        Assert.Equal(Usd, dto.CurrencyId);
+        Assert.Equal("USD", dto.Currency);
         Assert.Single(dto.Items);
         Assert.Equal(100m, dto.Items[0].UnitPrice);
 
@@ -46,7 +53,7 @@ public class PlaceOrderCommandHandlerTests
         var productsRepo = TestRepository.Build(Array.Empty<Product>());
         var ordersRepo = TestRepository.Build(Array.Empty<Order>());
 
-        var handler = new PlaceOrderCommandHandler(productsRepo.Object, ordersRepo.Object);
+        var handler = new PlaceOrderCommandHandler(productsRepo.Object, ordersRepo.Object, Currencies().Object);
         var command = new PlaceOrderCommand(
             Guid.NewGuid(),
             "USD",
