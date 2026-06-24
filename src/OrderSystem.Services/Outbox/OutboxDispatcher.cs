@@ -65,7 +65,7 @@ public class OutboxDispatcher : BackgroundService
         {
             try
             {
-                await DeliverAsync(message.Type, message.Content, email, cancellationToken);
+                await DeliverAsync(message.Type, message.Content, email, db, cancellationToken);
                 message.ProcessedOn = DateTime.UtcNow;
             }
             catch (Exception ex)
@@ -78,7 +78,12 @@ public class OutboxDispatcher : BackgroundService
         await db.SaveChangesAsync(cancellationToken);
     }
 
-    private async Task DeliverAsync(string type, string content, IEmailService email, CancellationToken cancellationToken)
+    private async Task DeliverAsync(
+        string type,
+        string content,
+        IEmailService email,
+        AppDbContext db,
+        CancellationToken cancellationToken)
     {
         // Map integration messages to external side-effects by type.
         if (type == nameof(OrderPlacedDomainEvent))
@@ -89,7 +94,12 @@ public class OutboxDispatcher : BackgroundService
             var customerId = order.GetProperty("CustomerId").GetGuid();
             var total = order.GetProperty("TotalAmount");
             var amount = total.GetProperty("Amount").GetDecimal();
-            var currency = total.GetProperty("Currency").GetString() ?? "";
+            var currencyId = total.GetProperty("CurrencyId").GetInt32();
+
+            var currency = await db.Currencies
+                .Where(c => c.Id == currencyId)
+                .Select(c => c.Code)
+                .FirstOrDefaultAsync(cancellationToken) ?? string.Empty;
 
             await email.SendOrderConfirmationAsync(orderId, customerId, amount, currency, cancellationToken);
         }
