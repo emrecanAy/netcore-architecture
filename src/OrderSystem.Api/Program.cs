@@ -1,23 +1,43 @@
+using Microsoft.EntityFrameworkCore;
+using OrderSystem.Api.Middlewares;
+using OrderSystem.Commands.Products.CreateProduct;
+using OrderSystem.Common;
+using OrderSystem.Composition;
+using OrderSystem.Queries.Products.GetProduct;
+using OrderSystem.Repositories.Concrete;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+var appSettings = builder.Configuration.GetSection(AppSettings.SectionName).Get<AppSettings>()
+                  ?? new AppSettings();
 
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+// Single composition root. Scan the Commands and Queries assemblies for
+// handlers, validators and domain-event handlers.
+builder.Services.AddCompositionSetup(
+    appSettings,
+    typeof(CreateProductCommand).Assembly,
+    typeof(GetProductQuery).Assembly);
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+// Migration is a deliberate, separate step (PROJECT.md §15.7): run with --migrate.
+if (args.Contains("--migrate"))
 {
-    app.MapOpenApi();
+    using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    await db.Database.MigrateAsync();
+    return;
 }
 
-app.UseHttpsRedirection();
+app.UseMiddleware<ExceptionMiddleware>();
 
-app.UseAuthorization();
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.MapControllers();
 
-app.Run();
+await app.RunAsync();
