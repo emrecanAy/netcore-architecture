@@ -1,9 +1,10 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>3902b321-b008-4af3-a712-41790c7ec7f3</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,6 +18,15 @@
 
   <ItemGroup>
     <ProjectReference Include="..\OrderSystem.Composition\OrderSystem.Composition.csproj" />
+  </ItemGroup>
+
+  <!-- sqlite-vec native loadable extension. Copied to the app root so the
+       connection interceptor can LoadExtension("vec0") at runtime. Swap/add the
+       .so/.dylib here when targeting Linux/macOS. -->
+  <ItemGroup>
+    <None Include="native\vec0.dll" Link="vec0.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
