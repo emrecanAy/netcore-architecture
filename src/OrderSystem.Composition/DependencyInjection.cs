@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using OrderSystem.Common;
 using OrderSystem.Repositories.Abstract;
 using OrderSystem.Repositories.Concrete;
+using OrderSystem.Repositories.Interceptors;
 using OrderSystem.Services;
 using OrderSystem.Services.Behaviors;
 
@@ -36,8 +37,14 @@ public static class DependencyInjection
         // External integrations (email, ...).
         services.AddServices();
 
-        // Persistence.
-        services.AddDbContext<AppDbContext>(options => options.UseSqlite(appSettings.ConnectionString));
+        // RAG help-desk integrations (AI provider, document ingestion).
+        services.AddRag(appSettings);
+
+        // Persistence. The connection interceptor loads the sqlite-vec extension so
+        // the vector index (vec_chunks) is available on every connection.
+        services.AddDbContext<AppDbContext>(options => options
+            .UseSqlite(appSettings.ConnectionString)
+            .AddInterceptors(new VecExtensionConnectionInterceptor(appSettings.Rag.VectorExtensionPath)));
         services.AddScoped(typeof(ISQLRepository<>), typeof(SqlRepository<>));
         services.AddScoped<IUnitOfWork, SQLUnitOfWork>();
 
