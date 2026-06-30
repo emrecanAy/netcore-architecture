@@ -11,6 +11,10 @@ var builder = WebApplication.CreateBuilder(args);
 var appSettings = builder.Configuration.GetSection(AppSettings.SectionName).Get<AppSettings>()
                   ?? new AppSettings();
 
+// The Gemini key is a secret: it comes from the environment / user-secrets,
+// never from appsettings.
+appSettings.Rag.ApiKey = builder.Configuration["GEMINI_API_KEY"] ?? appSettings.Rag.ApiKey;
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
