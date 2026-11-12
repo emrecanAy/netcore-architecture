@@ -10,8 +10,8 @@ namespace OrderSystem.Services.Behaviors;
 /// <summary>
 /// The single commit point. After the handler runs it dispatches accumulated
 /// domain events (cascading until none remain), relays each to the transactional
-/// outbox, then persists everything in one SaveChanges inside one transaction
-/// (PROJECT.md §6.3 + improvements §15.4/§15.5). Handlers never call SaveChanges.
+/// outbox, then persists everything in one SaveChanges inside one transaction.
+/// Handlers never call SaveChanges.
 /// </summary>
 public class UnitOfWorkBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     where TRequest : notnull

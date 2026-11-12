@@ -1,11 +1,10 @@
 # OrderSystem
 
-A sample order-management backend that mirrors the **JetZen** reference architecture
-(`PROJECT.md`): **Layered + CQRS + tactical DDD + Domain Events**, on **ASP.NET Core Web API**
+A sample order-management backend built on a **Layered + CQRS + tactical DDD + Domain Events**
+architecture, on **ASP.NET Core Web API**
 with **EF Core (SQLite)**.
 
-> Status: work in progress — built incrementally. See `PROJECT.md` for the architectural rationale
-> behind every layer.
+> Status: work in progress — built incrementally.
 
 ## Architecture at a glance
 
@@ -130,5 +129,3 @@ curl -X POST http://localhost:5080/api/helpdesk/ask \
   top-K similarity search above `MinScore`, and asks Gemini to answer **only** from the
   retrieved chunks — so answers stay grounded in the indexed knowledge base.
 
-> See `PROJECT.md` for the full rationale, and its §15 for the improvements applied here
-> (outbox, single transaction, migration as a separate `--migrate` step).

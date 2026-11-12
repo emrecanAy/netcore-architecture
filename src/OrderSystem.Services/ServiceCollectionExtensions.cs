@@ -7,7 +7,7 @@ namespace OrderSystem.Services;
 
 /// <summary>
 /// Registers external integrations. Kept in the Services layer so the composition
-/// root stays a thin aggregator (PROJECT.md §9).
+/// root stays a thin aggregator.
 /// </summary>
 public static class ServiceCollectionExtensions
 {

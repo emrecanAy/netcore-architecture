@@ -6,7 +6,7 @@ namespace OrderSystem.Services.Behaviors;
 /// <summary>
 /// Runs every registered <see cref="IValidator{T}"/> for the request before the
 /// handler. On failure it throws <see cref="ValidationException"/> and the handler
-/// never executes (PROJECT.md §7.3).
+/// never executes.
 /// </summary>
 public class ValidationBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     where TRequest : notnull

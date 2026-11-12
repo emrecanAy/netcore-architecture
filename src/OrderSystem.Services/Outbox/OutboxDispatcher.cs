@@ -10,7 +10,7 @@ using OrderSystem.Services.Abstract;
 namespace OrderSystem.Services.Outbox;
 
 /// <summary>
-/// Reliably relays committed domain events to the outside world (PROJECT.md §15.4).
+/// Reliably relays committed domain events to the outside world.
 /// Runs after persistence, so external side-effects (e.g. confirmation email) never
 /// fire for a transaction that rolled back. Polls unprocessed outbox rows, performs
 /// the integration, and marks them processed.

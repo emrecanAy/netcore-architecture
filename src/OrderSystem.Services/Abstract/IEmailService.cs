@@ -2,7 +2,7 @@ namespace OrderSystem.Services.Abstract;
 
 /// <summary>
 /// External email integration, hidden behind an interface so handlers and the
-/// outbox dispatcher never depend on a concrete provider (PROJECT.md §10).
+/// outbox dispatcher never depend on a concrete provider.
 /// </summary>
 public interface IEmailService
 {

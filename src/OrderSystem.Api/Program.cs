@@ -28,7 +28,7 @@ builder.Services.AddCompositionSetup(
 
 var app = builder.Build();
 
-// Migration is a deliberate, separate step (PROJECT.md §15.7): run with --migrate.
+// Migration is a deliberate, separate step: run with --migrate.
 if (args.Contains("--migrate"))
 {
     using var scope = app.Services.CreateScope();

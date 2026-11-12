@@ -3,7 +3,7 @@ namespace OrderSystem.Repositories.Abstract;
 /// <summary>
 /// Generic repository. Derives from <see cref="IQueryable{T}"/> so application
 /// handlers can compose EF LINQ (Include/Where/AsNoTracking) directly. This is a
-/// pragmatic trade-off discussed in PROJECT.md §15.3.
+/// deliberate, pragmatic trade-off.
 /// </summary>
 public interface ISQLRepository<TEntity> : IQueryable<TEntity> where TEntity : class
 {

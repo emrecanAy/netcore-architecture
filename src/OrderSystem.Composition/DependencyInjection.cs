@@ -13,7 +13,7 @@ using OrderSystem.Services.Behaviors;
 namespace OrderSystem.Composition;
 
 /// <summary>
-/// Composition root. All DI registration converges here (PROJECT.md §9).
+/// Composition root. All DI registration converges here.
 /// Handlers, validators and notification handlers are discovered by assembly
 /// scanning, so adding a feature needs no manual registration here.
 /// </summary>

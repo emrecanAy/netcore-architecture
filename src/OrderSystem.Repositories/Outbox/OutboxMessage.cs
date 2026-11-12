@@ -2,7 +2,7 @@ namespace OrderSystem.Repositories.Outbox;
 
 /// <summary>
 /// Transactional outbox row. Domain events are serialized here in the same
-/// transaction that persists the state change (see PROJECT.md §15.4), then a
+/// transaction that persists the state change, then a
 /// background dispatcher publishes them reliably and marks them processed.
 /// </summary>
 public class OutboxMessage

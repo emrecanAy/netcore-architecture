@@ -6,7 +6,7 @@ namespace OrderSystem.Models.Abstract;
 /// <summary>
 /// Gives an entity the ability to <b>accumulate</b> domain events instead of
 /// publishing them immediately. The pipeline (UnitOfWorkBehavior) collects and
-/// dispatches them right before persistence — see PROJECT.md §6.
+/// dispatches them right before persistence.
 /// </summary>
 public abstract class EntityDomainEvent
 {

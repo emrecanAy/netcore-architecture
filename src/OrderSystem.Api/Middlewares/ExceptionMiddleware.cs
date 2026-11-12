@@ -6,7 +6,7 @@ namespace OrderSystem.Api.Middlewares;
 
 /// <summary>
 /// Translates domain and validation exceptions into clean HTTP responses so
-/// controllers stay thin and never wrap calls in try/catch (PROJECT.md §11).
+/// controllers stay thin and never wrap calls in try/catch.
 /// </summary>
 public class ExceptionMiddleware
 {

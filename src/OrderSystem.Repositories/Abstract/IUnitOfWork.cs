@@ -5,7 +5,7 @@ namespace OrderSystem.Repositories.Abstract;
 /// <summary>
 /// Thin shell over EF Core's ChangeTracker. Lets the pipeline collect tracked
 /// entities (to harvest domain events), commit once, and wrap everything in a
-/// single transaction (PROJECT.md §8.2, §15.5).
+/// single transaction.
 /// </summary>
 public interface IUnitOfWork
 {
